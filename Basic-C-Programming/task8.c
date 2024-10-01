@@ -14,7 +14,8 @@ void noooError(char *str){
 
 //Convert int to char
 char int_to_char(int digit){
-	return digit + '\0';
+	//return digit + '\0';
+	return digit;
 }
 
 //Takes in two arguments: input file (1) and output file (2)
@@ -36,7 +37,7 @@ int main(int argc, char*argv[]){
 	int rFile = open(input_file, O_RDONLY);
 	if(rFile < 0)
 		noooError("Error opening input file");
-	
+
 	//Open output file
 	int oFile = open(output_file, O_WRONLY | O_CREAT, 0666);
 	if(oFile < 0)
