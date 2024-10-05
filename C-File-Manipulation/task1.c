@@ -4,7 +4,7 @@
  * 	2) Alphabetic Characters	3) Numerical Characters		4) Other Characters
  * While parameter 5 is a copy of the input file, created by reading files 2, 3, and 4 */
 
-#include <sys/stat.h>
+#include <sys/stat.h> //File permissions
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +21,7 @@ void dangiterror(char *str){
 //Helper function that returns whether the character is alphabetic
 bool isAlphabetic(char c){
 	int ascii = (int) c;
+	if(ascii == 10){ return true; } //New line, we still want to include
 	if(ascii > 64 && ascii < 91) { return true; }  //Uppercase Letters
 	else if(ascii > 96 && ascii < 123) { return true; }  //Lowercase Letters
 	else { return false; }
@@ -29,15 +30,18 @@ bool isAlphabetic(char c){
 //Helper function that returns whether the character is numeric
 bool isNumeric(char c){
 	int ascii = (int) c;
+	if(ascii == 10){ return true; } //New line, still want to include
 	return((ascii > 47) && (ascii < 58));
 }
 
 int main(int argc, char *argv[]){
+	
 	int nbyte;
 	char buffer[BUFFER_SIZE];
 	char tempBuffer[BUFFER_SIZE];  //Temporary buffer used when writing
 	tempBuffer[0] = ' '; 
-       	int inputFile, alphaFile, numFile, otherFile, copyFile;	
+       	int inputFile, alphaFile, numFile, otherFile, copyFile;
+	bool written_char = false;  //Could be substituted for ints but improves readability	
 
 	//Check for correct number of parameters
 	if(argc != 6){ dangiterror("Incorrect number of parameters - please enter 5"); }
@@ -46,10 +50,10 @@ int main(int argc, char *argv[]){
 	if((inputFile = open(argv[1], O_RDONLY)) < 0){ dangiterror("Error Opening input file"); }
 
 	//Opening output files
-	if((alphaFile = open(argv[2], O_WRONLY | O_CREAT)) < 0){ dangiterror("Error Opening First Output Parameter"); }
-	if((numFile = open(argv[3], O_WRONLY | O_CREAT)) < 0){ dangiterror("Error Opening Second Output Parameter"); }
-	if((otherFile = open(argv[4], O_WRONLY | O_CREAT)) < 0){ dangiterror("Error Opening Third Output Parameter"); }
-	if((copyFile = open(argv[5], O_WRONLY | O_CREAT)) < 0){ dangiterror("Error Opening Fourth Output Parameter"); }
+	if((alphaFile = open(argv[2], O_RDWR | O_CREAT | O_TRUNC, 0666)) < 0){ dangiterror("Error Opening First Output Parameter"); }
+	if((numFile = open(argv[3], O_RDWR | O_CREAT | O_TRUNC, 0666)) < 0){ dangiterror("Error Opening Second Output Parameter"); }
+	if((otherFile = open(argv[4], O_RDWR | O_CREAT | O_TRUNC, 0666)) < 0){ dangiterror("Error Opening Third Output Parameter"); }
+	if((copyFile = open(argv[5], O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0){ dangiterror("Error Opening Fourth Output Parameter"); }
 
 	//Read from input file and write (either correct type character or a space) to output file 1-3
 	while((nbyte = read(inputFile, buffer, BUFFER_SIZE)) > 0){
@@ -71,22 +75,28 @@ int main(int argc, char *argv[]){
 	//Getting size of file to loop again
 	off_t offset = lseek(inputFile, 0, SEEK_END);
 
+	//Reset file pointers for output files
+	lseek(alphaFile, 0, SEEK_SET);
+	lseek(numFile, 0, SEEK_SET);
+	lseek(otherFile, 0, SEEK_SET);
+
 	//Create the copy file by looping through the first 3 output files
 	for(int i = 0; i < offset; i++) {
+		written_char = false;
 		if((read(alphaFile, buffer, BUFFER_SIZE)) < 0) { dangiterror("Output 1 Read Error"); }
 		if(buffer[0] != ' ') { //If it is not a space, valid character and write
 			if((write(copyFile, buffer, BUFFER_SIZE)) < 0) { dangiterror("Copy write error"); }
-			continue; //Skip the rest of the logic and go to the next iteration
+			written_char = true;
 		}
-		offset--;
 		if((read(numFile, buffer, BUFFER_SIZE)) < 0) { dangiterror("Output 2 Read Error"); }
                 if(buffer[0] != ' ') { //If it is not a space, valid character and write
                         if((write(copyFile, buffer, BUFFER_SIZE)) < 0) { dangiterror("Copy write error"); }
-                        continue; //Skip the rest of the logic and go to the next iteration
+			written_char = true;
                 }
-                offset--;
 		if((read(otherFile, buffer, BUFFER_SIZE)) < 0) { dangiterror("Output 3 Read Error"); }
-		//If it reached this point, it must be an 'other' character so we can write it
-		if((write(copyFile, buffer, BUFFER_SIZE)) < 0) { dangiterror("Copy write error"); }
+		if(written_char == false) {
+			if((write(copyFile, buffer, BUFFER_SIZE)) < 0) { dangiterror("Copy write error"); }
+		}
 	}
+	exit(0);
 }
