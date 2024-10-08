@@ -1,8 +1,7 @@
 /* Lab 4 - Task 2
  * JJ McCauley
  * Task: Takes in an input file argument up to 80 characters and finds an integer embedded in the file, printing out the
-	 argument + 10 to the standard output. 
-   Note: Takes approach outlined in instructions, although convoluted (for good reason though)*/
+	 argument + 10 to the standard output. */
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -21,24 +20,27 @@ void notwork(char *msg) {
 }
 
 /* Returns 1 if character c is a digit, 0 otherwise */
-int isDigit(int c){
-	int decValue = c - 48;
-	if(decValue <= 0 || decValue >= 10) {
-		return 0;
+int isDigit(char c){
+	if(c >= '0' && c <= '9') {
+		return 1; //It is a digit
 	}
 	else{
-		return 1;
+		return 0; //It is not a digit
 	}
 }
 
 /* Converts integer to string */
 char* intToString(int num){
-	char *str;
+	char *str, *tempStr;
 	int curDigit, i = 0;
 	while(num != 0){
 		curDigit = num%10; //Get the last digit
-		str[i++] = (char)curDigit + '0';
+		tempStr[i++] = (char)curDigit + '0';
 		num = num/10; //Remove the last digit
+	}
+	//Un-reverse string
+	for(int j = 0; j < i; j--){
+		str[j] = tempStr[i-j];
 	}
 	return str;
 }
@@ -46,9 +48,10 @@ char* intToString(int num){
 /* Convert string to integer*/
 int stringToInt(char *c){
 	if(c == NULL || c[0] == '\0'){notwork("No digits found in input file");}
-	int num = ((int)c[0] - '0'), counter = 1, asciiVal;
-	while(c[counter] != ' '){
-		asciiVal = ((int)c[counter] - '0');
+	int num = (int)c[0], counter = 1, asciiVal;
+	while(c[counter] != ' ' && counter < 10){
+		asciiVal = ((int)c[counter]);
+		printf("%d\n", asciiVal);
 		if(asciiVal > 9 || asciiVal < 0){notwork("DEV: Invalid num");}
 		if(num > (MAX_INT/10)){notwork("Int too large");}
 		num = (num*10) +  asciiVal;
@@ -66,15 +69,16 @@ void main(int argc, char*argv[]){
 	int iFile, num, fileSizeCounter = 0, digitCounter = 0, nbyte;
 	char buffer[BUFFER_SIZE], cNum[10] = {' '}, *finalCNum;
 	
-	iFile = open(argv[0], O_RDONLY);
+	iFile = open(argv[1], O_RDONLY);
 
 	//Read the input file, appending to cNum if valid digit
 	while((nbyte = (read(iFile, buffer, BUFFER_SIZE))) > 0){
 		if(nbyte < 0){notwork("Read error");}
-		if(isDigit((int)buffer[0]) == 1){
+		if((isDigit(buffer[0])) == 1){
 			//Append digit to c-string
 			cNum[digitCounter] = buffer[0];
 			digitCounter++;
+			printf("Character read: '%c' ASCII: %d\n", buffer[0], buffer[0]);
 			if(digitCounter >= 10){notwork("Error - Integer in file is too large");}
 		}
 	}
@@ -82,14 +86,16 @@ void main(int argc, char*argv[]){
 	//Convert cNum c-string to integer
 	num = stringToInt(cNum);
 
+	printf("String to int success");
 	//Add num_to_add to integer
 	num += NUM_TO_ADD;
 
 	//Convert num back to c-String
 	finalCNum = intToString(num);
-
+	
+	printf("Int to String Successful");
 	//Print to standard output using system call
 	if((write(1, finalCNum, digitCounter)) < 0){notwork("Error writing to standard output");}
 
-	exit(1);
+	exit(0);
 }
