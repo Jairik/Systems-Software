@@ -21,27 +21,28 @@ void pError(char *msg){
 int palind(int fd1, int fd2){
 	char buf1[BSIZE], buf2[BSIZE];  // Buffers & temporary characters for comparison
 	int offsetForward = lseek(fd1, 0, SEEK_SET);  // Setting fd1 to read forward
-	int offsetBackward = lseek(fd2, 0, SEEK_END);	// Setting fd2 to read backward
+	int middle = (offsetForward/2)+1;  // Creating middle to see if this works
+	int offsetBackward = lseek(fd2, -2, SEEK_END);	// Setting fd2 to read backward
 	int cForward, cBackward;
-	while(offsetForward < offsetBackward){
-		lseek(fd2, -1, SEEK_CUR);
+	while(offsetForward != middle){
 		if((cForward = read(fd1, buf1, BSIZE)) < 0){pError("Error reading file (fd1)");}
 		if((cBackward = read(fd2, buf2, BSIZE)) < 0){pError("Error reading file (fd2)");}
 		if(buf1[0] != buf2[0]){return 0;}  // Counterargument found, not palindrome
-		lseek(fd2, -1, SEEK_CUR);  // Move file 'cursor' back 1 to make up for read
+		lseek(fd2, -2, SEEK_CUR);  // Move file 'cursor' back 2 to make up for read
 		// Updating offsets for conditional
-		offsetForward = lseek(fd1, 0, SEEK_CUR); offsetBackward = lseek(fd2, 0, SEEK_CUR);
+		offsetForward++;
 	}	
 	return 1;  // No counterarguments found, contents forms a palindrome
 }
 
+// Takes file as argument
 int main(int argc, char *argv[]){
 	if(argc != 2){pError("Invalid number of parameters");}
 	int openFd, newfd, result;
 	if((openFd = open(argv[1], O_RDONLY, 0666)) < 0) {pError("Error opening file");}
 
 	//Create duplicate file descriptor 
-	if((newfd = dup(openFd)) == -1){pError("Error duplicating file descriptor");}
+	if((newfd = open(argv[1], O_RDONLY, 0666)) == -1){pError("Error duplicating file descriptor");}
 	
 	//Call & test palind function
 	result = palind(openFd, newfd);

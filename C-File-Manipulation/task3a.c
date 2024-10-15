@@ -1,6 +1,6 @@
 /* Lab 4 - Task 3.1
  * JJ McCauley
- * Makes a directory heirchy using symbolic lunks */
+ * Makes a directory heirchy using symbolic links */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,8 +26,17 @@ int main(){
 	if(mkdir("~/Systems-Software/C-File-Manipulation/homedir/Dir2/Dir21") == -1){pError("Error creating Dir21");}
 
 	// Copy hello file under Dir21 (copy by byte)
-	int openfd = open("hello", O_RDONLY, 0666);
-	int copyfd = open("hello", )
-	
+	if(link("hello", "~/Systems-Software/C-File-Manipulation/homedir/Dir2/Dir21/hello") == -1){pError("Error copying file");
+}
+	// Create symbolic link 'toDir21' to Dir21 in Dir1
+	if(symlink("~/Systems-Software/C-File-Manipulation/homedir/Dir2/Dir21", "~/Systems-Software/C-File-Manipulation/homedir/Dir1/toDir21") == -1){
+		pError("Error creating symbolic link toDir21");
+	}
 
+	// Create symbolic link 'toHello' to Hello executable in Dir1/hello
+	if(symlink("~/Systems-Software/C-File-Manipulation/homedir/Dir2/Dir21/hello", "~/Systems-Software/C-File-Manipulation/homedir/Dir1/toHello") == -1){
+		pError("Error creating symbolic link toHello");
+	}
+
+	exit(1);
 }
