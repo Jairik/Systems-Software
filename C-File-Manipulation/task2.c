@@ -31,28 +31,28 @@ int isDigit(char c){
 
 /* Converts integer to string */
 char* intToString(int num){
-	char *str, *tempStr;
+	char *str = malloc(12), *tempStr = malloc(12);
 	int curDigit, i = 0;
 	while(num != 0){
 		curDigit = num%10; //Get the last digit
-		tempStr[i++] = (char)curDigit + '0';
+		tempStr[i++] = (char)(curDigit + '0');
 		num = num/10; //Remove the last digit
 	}
 	//Un-reverse string
-	for(int j = 0; j < i; j--){
-		str[j] = tempStr[i-j];
+	for(int j = 0; j < i; j++){
+		str[j] = tempStr[i-j-1];
 	}
+	str[i] = '\0';  // Add null terminator at end
+	free(tempStr);
 	return str;
 }
 
 /* Convert string to integer*/
 int stringToInt(char *c){
 	if(c == NULL || c[0] == '\0'){notwork("No digits found in input file");}
-	int num = (int)c[0], counter = 1, asciiVal;
-	while(c[counter] != ' ' && counter < 10){
-		asciiVal = ((int)c[counter]);
-		printf("%d\n", asciiVal);
-		if(asciiVal > 9 || asciiVal < 0){notwork("DEV: Invalid num");}
+	int num = 0, counter = 0, asciiVal;
+	while(counter < strlen(c)){
+		asciiVal = c[counter] - '0';  //Convert char to string
 		if(num > (MAX_INT/10)){notwork("Int too large");}
 		num = (num*10) +  asciiVal;
 		counter++;
@@ -78,7 +78,6 @@ void main(int argc, char*argv[]){
 			//Append digit to c-string
 			cNum[digitCounter] = buffer[0];
 			digitCounter++;
-			printf("Character read: '%c' ASCII: %d\n", buffer[0], buffer[0]);
 			if(digitCounter >= 10){notwork("Error - Integer in file is too large");}
 		}
 	}
@@ -86,14 +85,12 @@ void main(int argc, char*argv[]){
 	//Convert cNum c-string to integer
 	num = stringToInt(cNum);
 
-	printf("String to int success");
 	//Add num_to_add to integer
 	num += NUM_TO_ADD;
 
 	//Convert num back to c-String
 	finalCNum = intToString(num);
 	
-	printf("Int to String Successful");
 	//Print to standard output using system call
 	if((write(1, finalCNum, digitCounter)) < 0){notwork("Error writing to standard output");}
 
