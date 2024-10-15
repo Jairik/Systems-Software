@@ -25,6 +25,7 @@ int palind(int fd1, int fd2){
 	int offsetBackward = lseek(fd2, -2, SEEK_END);	// Setting fd2 to read backward
 	int cForward, cBackward;
 	while(offsetForward != middle){
+		printf("Inside loop");
 		if((cForward = read(fd1, buf1, BSIZE)) < 0){pError("Error reading file (fd1)");}
 		if((cBackward = read(fd2, buf2, BSIZE)) < 0){pError("Error reading file (fd2)");}
 		if(buf1[0] != buf2[0]){return 0;}  // Counterargument found, not palindrome
@@ -39,11 +40,12 @@ int palind(int fd1, int fd2){
 int main(int argc, char *argv[]){
 	if(argc != 2){pError("Invalid number of parameters");}
 	int openFd, newfd, result;
-	if((openFd = open(argv[1], O_RDONLY, 0666)) < 0) {pError("Error opening file");}
-
-	//Create duplicate file descriptor 
-	if((newfd = open(argv[1], O_RDONLY, 0666)) == -1){pError("Error duplicating file descriptor");}
 	
+	if((openFd = open(argv[1], O_RDONLY)) < 0){
+		pError("Error opening file descriptor");
+	}
+	if((newfd = dup(openFd)) == -1){pError("Error opening duplicate");}
+
 	//Call & test palind function
 	result = palind(openFd, newfd);
 	if(result == 1){

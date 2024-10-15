@@ -26,7 +26,8 @@ int main(){
 	if(mkdir("~/Systems-Software/C-File-Manipulation/homedir/Dir2/Dir21") == -1){pError("Error creating Dir21");}
 
 	// Copy hello file under Dir21 (copy by byte)
-	if(link("hello", "~/Systems-Software/C-File-Manipulation/homedir/Dir2/Dir21/hello") == -1){pError("Error copying file");
+	if(link("hello", "~/Systems-Software/C-File-Manipulation/homedir/Dir2/Dir21/hello") == -1){
+		pError("Error copying file");
 }
 	// Create symbolic link 'toDir21' to Dir21 in Dir1
 	if(symlink("~/Systems-Software/C-File-Manipulation/homedir/Dir2/Dir21", "~/Systems-Software/C-File-Manipulation/homedir/Dir1/toDir21") == -1){
