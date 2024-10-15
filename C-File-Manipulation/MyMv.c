@@ -20,6 +20,6 @@ int main(int argc, char* argv[]){
 	char *file = argv[1];
 	char *path = argc[2];
 
-		
+			
 
 }

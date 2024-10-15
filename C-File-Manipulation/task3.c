@@ -39,10 +39,10 @@ int palind(int fd1, int fd2){
 // Takes file as argument
 int main(int argc, char *argv[]){
 	if(argc != 2){pError("Invalid number of parameters");}
-	int openFd, newfd, result;
+	int openFd, newfd, result; 
 	
-	if((openFd = open(argv[1], O_RDONLY)) < 0){
-		pError("Error opening file descriptor");
+	if((openFd = open(argv[1], O_RDONLY)) < 0){ 
+		pError("Error opening file descriptor"); 
 	}
 	if((newfd = dup(openFd)) == -1){pError("Error opening duplicate");}
 
