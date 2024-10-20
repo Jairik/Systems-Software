@@ -21,15 +21,18 @@ void pError(char *msg){
 int palind(int fd1, int fd2){
 	char buf1[BSIZE], buf2[BSIZE];  // Buffers & temporary characters for comparison
 	int offsetForward = lseek(fd1, 0, SEEK_SET);  // Setting fd1 to read forward
-	int middle = (offsetForward/2)+1;  // Creating middle to see if this works
+	int middle = ((lseek(fd2, 0, SEEK_END))/2);  // Setting offset middle
 	int offsetBackward = lseek(fd2, -2, SEEK_END);	// Setting fd2 to read backward
 	int cForward, cBackward;
-	while(offsetForward != middle){
+	printf("Offset center: %d\n", middle);
+	printf("Scanning for palindrome...\n");
+	while(offsetForward < middle){
 		if((cForward = read(fd1, buf1, BSIZE)) < 0){pError("Error reading file (fd1)");}
 		if((cBackward = read(fd2, buf2, BSIZE)) < 0){pError("Error reading file (fd2)");}
 		if(buf1[0] != buf2[0]){return 0;}  // Counterargument found, not palindrome
 		lseek(fd2, -2, SEEK_CUR);  // Move file 'cursor' back 2 to make up for read
 		// Updating offsets for conditional
+		printf("offsetForward: %d   ", offsetForward);
 		offsetForward++;
 	}	
 	return 1;  // No counterarguments found, contents forms a palindrome

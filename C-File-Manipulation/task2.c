@@ -94,5 +94,6 @@ void main(int argc, char*argv[]){
 	//Print to standard output using system call
 	if((write(1, finalCNum, digitCounter)) < 0){notwork("Error writing to standard output");}
 
+	printf("\n"); // Print new line for improved formatting
 	exit(0);
 }
