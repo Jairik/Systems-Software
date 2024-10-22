@@ -1,6 +1,7 @@
 /* Lab 5-6 Task 2
  * JJ McCauley
- * Task: Read the utmp file and count number of USER_PROCESS records */
+ * Task: Read the utmp file and count number of USER_PROCESS records 
+ * Note: Use 'who' command to verify output */
 
 #include <stdlib.h>
 #include <stdio.h>
