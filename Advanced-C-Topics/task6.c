@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>  // Synchronization technique
 #define BUFFER_SIZE 1
 
 //Helper function for delcaring errors
@@ -17,12 +18,28 @@ void pError(char *msg){
 	exit(1); //Exit with error code
 }
 
+
 // Helper function to determine if char is numeric (returns 1 if true, 0 if false)
 int isNumeric(char c){
 	int x = (int)c - '0';
 	if(x > 9 || x < 0){return 0;}
 	else{return 1;}
 }
+
+
+// Signal handler to syncrhonize processes
+void sig_handler(int signo){
+	if(signo == SIGUSR1){
+		// do something here
+	}
+	if(signo == SIGUSR2){
+
+	}
+	else{
+		pError("Did not receive any valid signal");
+	}
+}
+
 
 // Parameter: Input file name
 int main(int argc, char *argv[]){
@@ -31,6 +48,10 @@ int main(int argc, char *argv[]){
 	// Open file once
 	int fd;
 	if((fd = open(argv[1], O_RDONLY)) < 0){pError("invalid file");}
+
+	// Create signal handlers
+	signal(SIGUSR1, sig_handler); // Child waits for SIGUSR1 from Parent
+	signal(SIGUSR2, sig_handler); // Parent waits for SIGUSR2 from Child
 
 	// Create child process
 	pid_t pid = fork();
@@ -53,6 +74,7 @@ int main(int argc, char *argv[]){
 	else{
 		char buf2[BUFFER_SIZE];
 		int opFd = open("parent.txt", O_CREAT | O_TRUNC | O_WRONLY, 0644);
+
 		while(read(fd, buf2, BUFFER_SIZE) > 0){
 			if(isNumeric(buf2[0] == 1)) {  // Print numeric characters only
 				if((write(opFd, buf2, BUFFER_SIZE)) < 0){pError("writing to parent output file");}
