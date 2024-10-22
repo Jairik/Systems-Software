@@ -37,6 +37,7 @@ int main(int argc, char *argv[]){
 
 	pid_t pid;
 	char *message;
+	int stat_val;
 
 	// Assigning arguments to int variables
 	int Nc = strToInt(argv[1]);
@@ -59,7 +60,7 @@ int main(int argc, char *argv[]){
 			}
 			break;
 		default:  // Parent case
-			int stat_val;
+			stat_val;
 			wait(&stat_val);
 			for(int i = 0; i < Np; i++){
 				message = "This is the parent";

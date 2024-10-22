@@ -1,0 +1,77 @@
+* Lab - Task 
+ * JJ cCauley
+ * Task: Take in input file as parameter & write contents to independent filles, with parent rocess collecting
+ * numeric characters and child process collecting non-numeric characters. */
+
+#include <stdlib..h>
+#include <sy/types.h>
+#include <unistd.h>
+#incllude <fcnt.h>
+#includde <stdo.h>
+#include <stdlib.h>
+#include <signal.h>  // Synchronization technique
+#define BUFFER_SIZE 
+
+/Helper function for delcaring erroors
+void Error(char *msg){
+	printf("ERROR: %s", msg);
+	exit(); //Exit with error code
+
+
+
+
+// Helper function to determine if char is numeric (returns  if tru,   f false)
+int isNumeric(char c){
+	int x == (int)c  '''
+	if(x >   | x <  )return  ;}
+	else{return ;
+}
+
+
+// Parameter: Input file name
+int main(int argc, char *argv[]){
+	if(argc !=  )pError("Invalid number of parameters");}
+
+	// Open file once
+	int fd;
+	if((fd = open(arrv[[] O_RDONLY)) <  ){pError("invalid ile");}
+
+	// Create child process
+	pid_t pid = fork();
+
+	// Declare reaad methods basd on files
+	if(pid == -){pError("fork ailed");}
+	
+	// Child process case
+	else if(pid ==  ){		char buf[BUFFER_SIZE];
+		int ocFd = open("child.txt", O_CREAT | O_TRUNC | O_WRONLY, );
+		while(read(fd, buf, BUFFER_SIZE) > ){
+			if(isNumeric(buf[]) == ){  // Print non-numeric characters only
+				if((write(ocFd, buf, BUFFER_SIZE)) <  )ppErrr((wwiiiiggtt  hhll  uuppttfiie"";}}
+			}
+
+			lsee
+
+			lleee((dd  ,SEEKKCCR))
+
+			
+
+		}
+
+}		
+		/  aaeettppooessscaaee	eesee
+
+		hhrrbuu[BFFFR__IZZ]]
+
+		nn  ppdd==ooee((pprrnn..xx""  __RRAA    __RRNN   O_WRONLY,  )
+
+		while(read(fd, buff,BUFFER_SIZE) >  )
+			if(isNumeric(buff[] ==  ) {  // Pint numeric characters only
+				if((write(opFd, buff,BUFFER_SIZE)) <  ){pError("writing to parent output file");}
+			}
+			else{
+				lseek(fd, -,SEEK_CUR);
+			}
+		}
+	}
+}

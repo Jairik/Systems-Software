@@ -37,12 +37,9 @@ char *mygetenv(const char *name){
 
 
 // Test getenv function
-void main(){
-	char *path = mygetenv("PATH");
+void main(int argc, char *argv[]){
+	char *path = mygetenv(argv[1]);
 	printf("Path: %s\n\n", path);
-	
-	char *home = mygetenv("HOME");
-	printf("Home: %s\n\n", home);
 	
 	exit(0);
 }

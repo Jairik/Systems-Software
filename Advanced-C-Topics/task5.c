@@ -36,6 +36,7 @@ int main(int argc, char *argv[]){
 
 	pid_t pid;
 	char *message;
+	int stat_val;
 
 	// Assigning arguments to int variables
 	int Nc = strToInt(argv[1]);
@@ -51,14 +52,14 @@ int main(int argc, char *argv[]){
 			pError("fork failed");
 			exit(1);
 		case 0:  // Child case
-			 message = "This is the child";
+			 message = "I am JJ";
 			 int r;
 			 if((r = execlp("./child", "child", message, argv[1], argv[3], (char *) 0)) == -1){
 				 pError("exec error");
 			 }
 
 		default:  // Parent case
-			int stat_val;
+			stat_val;
 			pid = getpid();  // Getting parent pid
 			wait(&stat_val);
 			for(int i = 0; i < Np; i++){
