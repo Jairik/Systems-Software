@@ -27,20 +27,6 @@ int isNumeric(char c){
 }
 
 
-// Signal handler to syncrhonize processes
-void sig_handler(int signo){
-	if(signo == SIGUSR1){
-		// do something here
-	}
-	if(signo == SIGUSR2){
-
-	}
-	else{
-		pError("Did not receive any valid signal");
-	}
-}
-
-
 // Parameter: Input file name
 int main(int argc, char *argv[]){
 	if(argc != 2){pError("Invalid number of parameters");}
@@ -48,10 +34,6 @@ int main(int argc, char *argv[]){
 	// Open file once
 	int fd;
 	if((fd = open(argv[1], O_RDONLY)) < 0){pError("invalid file");}
-
-	// Create signal handlers
-	signal(SIGUSR1, sig_handler); // Child waits for SIGUSR1 from Parent
-	signal(SIGUSR2, sig_handler); // Parent waits for SIGUSR2 from Child
 
 	// Create child process
 	pid_t pid = fork();
@@ -64,9 +46,13 @@ int main(int argc, char *argv[]){
 		char buf[BUFFER_SIZE];
 		int ocFd = open("child.txt", O_CREAT | O_TRUNC | O_WRONLY, 0644);
 		while(read(fd, buf, BUFFER_SIZE) > 0){
-			if(isNumeric(buf[0] == 0)){  // Print non-numeric characters only
+			if(isNumeric(buf[0]) == 0){  // Print non-numeric characters only
 				if((write(ocFd, buf, BUFFER_SIZE)) < 0){pError("writing to child output file");}	
 			}
+			else{
+				lseek(fd, -1, SEEK_CUR);
+			}
+
 		}
 	}	
 
@@ -76,8 +62,11 @@ int main(int argc, char *argv[]){
 		int opFd = open("parent.txt", O_CREAT | O_TRUNC | O_WRONLY, 0644);
 
 		while(read(fd, buf2, BUFFER_SIZE) > 0){
-			if(isNumeric(buf2[0] == 1)) {  // Print numeric characters only
+			if(isNumeric(buf2[0]) == 1) {  // Print numeric characters only
 				if((write(opFd, buf2, BUFFER_SIZE)) < 0){pError("writing to parent output file");}
+			}
+			else{
+				lseek(fd, -1, SEEK_CUR);
 			}
 		}
 	}
