@@ -32,8 +32,6 @@ int main(int argc, char *argv[]){
 	// Open file once
 	int fd;
 	if((fd = open(argv[1], O_RDONLY)) < 0){pError("invalid file");}
-	
-	// Getting file size
 
 	// Create child process
 	pid_t pid = fork();
