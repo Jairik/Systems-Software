@@ -29,5 +29,8 @@ int main(){
 		if(pid2 == 0){
 
 		}
+		else{
+			//Use two wait calls, then print out message. just send signals with kill(getppid(), SIGUSR-). Light
+		}
 	}
 }

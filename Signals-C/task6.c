@@ -11,7 +11,7 @@
 /* Signal Handlers */
 void parent_handler(int sig){if(sig == SIGUSR2){exit(0);}}
 
-void child_handler(int sig){if(sig == SIGUSR1){exit(0);}}
+void child_handler(int sig){if(sig == SIGUSR1){kill(getppid(), SIGUSR2); exit(0);}}
 
 
 int main(){
@@ -34,7 +34,6 @@ int main(){
 			kill(getppid(), SIGUSR1);
 			while(1){  // Continiously check still exists 
 				if(getppid() == 1){exit(0);}
-			
 			}
 		}
 		else{  // Child process
