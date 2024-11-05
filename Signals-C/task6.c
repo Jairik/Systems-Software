@@ -27,24 +27,25 @@ int main(){
 		pid2 = fork();
 		signal(SIGUSR1, child_handler);
 		if(pid2 == -1){perror("Fork 2 error\n"); exit(1);}
-		else if(pid1 == 0){  // Grandparent process
+		else if(pid2 == 0){  // Grandparent process
 			for(int i = 0; i < 10; i++){
 				printf("grandparent process\n");
+				sleep(.5);
 			}
 			kill(getppid(), SIGUSR1);
-			while(1){  // Continiously check still exists 
-				if(getppid() == 1){exit(0);}
-			}
+			while(1){if(getppid() == 1){exit(0);}}
 		}
 		else{  // Child process
 			while(1){
 				printf("child process\n");
+				sleep(.5);
 			}		
 		}
 	}
 	else{  // Parent process 
 		while(1){
 			printf("parent process\n");
+			sleep(.5);
 		}
 	}
 }

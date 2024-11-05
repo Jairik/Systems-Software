@@ -8,15 +8,16 @@
 #include <time.h>
 #include <stdlib.h>
 
+
 int main(){
-	sigset_t new_set, newer_set, old_set;  // Signal sets
+	sigset_t new_set, newer_set, old_set, set2;  // Signal sets
 	
 	sigemptyset(&new_set);  // Clear signal sets
 	sigaddset(&new_set, SIGINT);
 	sigaddset(&new_set, SIGQUIT);
 	
 	sigprocmask(SIG_BLOCK, &new_set, &old_set); // Block the two signals
-	
+
 	// Iterate through loops
 	for(int i = 1; i < 6; i++){
 		printf("%d\n", i);
@@ -24,9 +25,10 @@ int main(){
 	}
 
 	// Block only SIGINT (can also be achieved through sigdelset() function)
+	// sigprocmask(SIG_SETMASK, &old_set, NULL);
 	sigemptyset(&newer_set);
 	sigaddset(&newer_set, SIGINT);
-	sigprocmask(SIG_SETMASK, &newer_set, NULL);
+	sigprocmask(SIG_BLOCK, &new_set, NULL);
 
 	printf("--- Second Loop ---\n");
 
@@ -35,7 +37,6 @@ int main(){
 		printf("%d\n", j);
 		sleep(1);
 	}
-
 
 	// Restore block to defaults
 	sigprocmask(SIG_SETMASK, &old_set, NULL); 
