@@ -1,0 +1,2 @@
+-- Task 2 Response --
+In order to run the process in the background, I used the & flag (./task2 &). This ran the process in the background and, as expected, printed "Hello World" every second. In order to stop this process, I used the ps command to retreive the pid of the process, then used kill <pid> to end the process.
