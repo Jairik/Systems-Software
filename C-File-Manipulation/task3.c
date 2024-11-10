@@ -44,7 +44,8 @@ int main(int argc, char *argv[]){
 	int openFd, newfd, result;
 	if((openFd = open(argv[1], O_RDONLY, 0666)) < 0) {pError("Error opening file");}
 
-	//Create duplicate file descriptor 
+	//Create duplicate file descriptor
+	// --- ADD DUP TO MAKE WORK -- 
 	if((newfd = open(argv[1], O_RDONLY, 0666)) == -1){pError("Error duplicating file descriptor");}
 	
 	//Call & test palind function

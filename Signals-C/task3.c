@@ -29,8 +29,8 @@ int main(){
 	}
 	// Parent case
 	else{
-		malloc();
 		int childPID = wait(&status);  // Waiting for child process to end
+		if(childPID == -1){perror("wait failed"); exit(1);}
 		lseek(fd, 0, SEEK_SET);  // Resetting the beggining of file
 		read(fd, msg, bufferSize);  // Reading message from file
 		printf("My son said %s\n", msg);  // Printing message

@@ -8,9 +8,15 @@
 #include <time.h>
 #include <stdlib.h>
 
+void sigquitHandler(int sig){
+	if(sig == SIGQUIT){
+		// Do nothing here
+	}
+}
+
 
 int main(){
-	sigset_t new_set, newer_set, old_set, set2;  // Signal sets
+	sigset_t new_set, newer_set, old_set;  // Signal sets
 	
 	sigemptyset(&new_set);  // Clear signal sets
 	sigaddset(&new_set, SIGINT);
@@ -25,10 +31,11 @@ int main(){
 	}
 
 	// Block only SIGINT (can also be achieved through sigdelset() function)
-	// sigprocmask(SIG_SETMASK, &old_set, NULL);
+	signal(SIGQUIT, sigquitHandler);  // Temporarily assign to empty signal handler
 	sigemptyset(&newer_set);
 	sigaddset(&newer_set, SIGINT);
-	sigprocmask(SIG_BLOCK, &new_set, NULL);
+	sigprocmask(SIG_SETMASK, &newer_set, NULL);
+	signal(SIGQUIT, SIG_DFL);  // Assign back to default 
 
 	printf("--- Second Loop ---\n");
 
