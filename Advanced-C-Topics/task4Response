@@ -1,6 +1,0 @@
--------------------------- Task 4 Response - How is this result different than task 3? --------------------------
-
-By using the wait function, the parent will not start it's iterations until the child process is done. Therefore,
-the child will be printed Nc times, then the parents will be printed Np times. This is different than task 3, where
-the processes iterated concurrently.
-
