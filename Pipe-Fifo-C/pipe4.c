@@ -8,11 +8,13 @@
 
 int main(int argc, char *argv[]){
 	int data_processed;
-	char buffer[BUFSIZ + 1];
+	char buffer[BUFSIZ + 1] = "123";
 	int file_descriptor;
-	memset(buffer, '\0', sizeof(buffer));
+	
 	sscanf(argv[1], "%d", &file_descriptor);
-	data_processed = read(file_descriptor, buffer, BUFSIZ);
-	printf("%d - read %d bytes: %s\n", getpid(), data_processed, buffer);
+	
+	data_processed = write(file_descriptor, buffer, BUFSIZ);
+	close(file_descriptor);  // Close the pipe to add null termination to it
+	printf("%d - wrote %d bytes: %s\n", getpid(), data_processed, buffer);
 	exit(0);
 }

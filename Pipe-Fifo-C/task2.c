@@ -27,17 +27,17 @@ int main(){
 		}
 		// Child process
 		if(fork_result == 0){
-			sprintf(buffer, "%d", file_pipes[0]);
-			(void)execl("pipe4", "pipe4", buffer, file_pipes[1], (char *) 0);
-		      	close(file_pipes[0]);	
+			close(file_pipes[0]);
+			sprintf(buffer, "%d", file_pipes[1]);
+			(void)execl("pipe4", "pipe4", file_pipes[1], (char *) 0);
 			exit(1);
 		}
 		// Parent process
 		else{
+			close(file_pipes[1]);  // Close write end of pipe for parent
 			wait(&status);  // Parent waits for child
-			data_processed = write(file_pipes[1], some_data, strlen(some_data));
-			printf("%d - wrote %d bytes\n", getpid(), data_processed);
-			close(file_pipes[1]);  // Closing the write end of the pipe
+			data_processed = read(file_pipes[0], buffer, strlen(buffer));
+			printf("%d - read %d bytes\n", getpid(), data_processed);
 		}
 	}	
 	exit(0);
