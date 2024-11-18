@@ -1,0 +1,5 @@
+--task 1 explanation--
+
+Without modification, this program this program displays "Wrote 3 bytes" (due to write(fd[1]) being called first), then displays "Read 3 bytes: 123" due the program reading the pipe after.
+
+WITH MODIFICATION, this program attempts to read an empty pipe, which leaves the program to run unexpectly, outputting nothing.
