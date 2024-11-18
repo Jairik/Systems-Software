@@ -13,13 +13,11 @@ int main(){
 	int data_processed, msg_processed, status;
 	int file_pipes[2], file_pipes2[2];
 	const char msg[] = "Hi there, Kiddo";
-	char buffer[BUFSIZ + 1];
+	char buffer[BUFSIZ + 1], fpipe1[BUFSIZ], fpipe2[BUFSIZ];
 	pid_t fork_result;
 
 	memset(buffer, '\0', sizeof(buffer));  // Set null terminator as all values in buffer
 	
-	printf("PID OF PARENT: %d\n", getpid());  // DEBUGGING PURPOSES
-
 	if(pipe(file_pipes) == 0){
 		
 		// Create second pipe
@@ -41,9 +39,9 @@ int main(){
 		if(fork_result == 0){
 			close(file_pipes[1]);  // Close write end of first pipe
 			close(file_pipes2[0]);  // Close read end of second pipe
-			sprintf(buffer, "%d", file_pipes[0]);
-			(void)execl("twoPipesChild", "twoPipesChild", buffer, file_pipes[0], file_pipes2[1], (char *) 0);
-			printf("exec unsuccessful\n");
+			sprintf(fpipe1, "%d", file_pipes[0]);
+			sprintf(fpipe2, "%d", file_pipes2[1]);
+			(void)execl("./twoPipesChild", "twoPipesChild", fpipe1, fpipe2, (char *) 0);
 			exit(1);
 		}
 		
@@ -54,9 +52,9 @@ int main(){
 			msg_processed = write(file_pipes[1], msg, strlen(msg));
 			printf("%d - wrote %d bytes\n", getpid(), msg_processed);
 			
-			wait(&status);  // Wait for child to write msg to pipe
+			//wait(&status);  // Wait for child to write msg to pipe
 
-			data_processed = read(file_pipes2[0], buffer, strlen(buffer));
+			data_processed = read(file_pipes2[0], buffer, BUFSIZ);
 			printf("%d - read %d bytes\n", getpid(), data_processed);	
 		}
 	}	
