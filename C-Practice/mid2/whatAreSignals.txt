@@ -1,0 +1,26 @@
+--- What are signals? Syntax & Details ---
+
+There are 5 Conditions for Generating Signals:
+	-> Terminal-generated signals occur when users press certain key (eg. ctr-z, ctr-c)
+	-> Hardware exceptions generate signals (eg. invalid memory reference)
+	-> Kill system call allows a process to send a signal to a process/group of processes
+	-> Kill BASH command allows us to send signals to other processes
+	-> Software conditions can generate signals when something happens (eg. out of band data)
+
+- Kernel can either Ignore the Signal, Catch the Signal (w/ signal() or sigaction()), or Let Default Action Apply
+
+#include <signal.h>
+int kill(pid_t pid, int signo);  // Send the signal to a specific process
+int raise(int signo);  // Send a signal to itself
+
+Alarm System Call
+#include <unistd.h>
+int alarm(int seconds);  // Returns 0 or number of seconds. When done, SIGALRM signal is generated
+
+Pause System Call
+#include <unistd.h>
+int pause(void);  // Suspends calling process until a signal is caught. Returns -1 w/ error
+
+Signal System Call
+#include <signal.h>
+sighandler_t signal(int signo, sighandler_t);  // Associates signal w/ a 'signal handler', taking in a pointer to a function to execute when that signal is generated.

@@ -15,6 +15,8 @@ pid_t waitpid(pid_t pid, int *status, int option);
 ^ Returns the same thing as wait(). However, adds the following optional parameters:
 	PARAM->pid: Specifies the child to wait for
 	PARAM->options: Controls the behavior of waitpid. Can be WNOHANG (return immediately if no child process has been exited), WUNTRACED (return if a child process has stopped), and WCONTINUED (return if a child process has resumed). Main one if WNOHANG.
+
+Key Difference: wait() System Call will wait for any process to finish, while waitpid() waits for a specific one. This is useful for when there are multiple processes at once.
 -------------------------------------
 
 Orphan Process: Parents are dead (terminated, killed, or exited) but child is still alive. The init process (PID == 1) adopts the child. 
