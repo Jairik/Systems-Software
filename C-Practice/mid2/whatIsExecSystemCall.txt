@@ -1,0 +1,20 @@
+--- What is exec system call? ---
+This system call allows for a child process to execute another program. The new process starts at it's main functions, with exec passing key parameters. The PID does not change when calling exec since it runs under the same process.
+
+Six system calls can be recognized with:
+	- Argument List (l) or Argument Vector (v)
+	- File Path (nothing extra) or File Name (p)
+	- With environment variable (e) or without it (nothing extra)
+
+#include <unistd.h>
+int execl(const char *path, <argument list>..., (char *) 0);  // Must end with ((char *) 0)
+int execv(const char *path, char *const argv[])
+int execle
+int execve
+int execlp
+int execvp
+
+PARAMETER ORDER:
+(const char *path/file, <argument list or vector>, <environment variable, if applicable);
+
+--- Easy Cheese ---

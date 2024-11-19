@@ -22,7 +22,7 @@ int main(){
 	act.sa_handler = ding;
 	if(sigaction(SIGUSR1, &act, 0) == -1){perror("Sigaction error");}
 
-	// 
+	// Create child 
 	pid = fork();
 	switch(pid){
 		case -1: // Failure

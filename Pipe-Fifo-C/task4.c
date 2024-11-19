@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
@@ -19,14 +20,16 @@ int main() {
 	const char some_data[] = "123";
 	char *buffer = (char *) malloc((strlen(some_data) + 1) * sizeof(char));  // Dynamically allocate space for buffer
 	
-	if((ret_val = mkfifo("halfduplex", 0666)))
+	// Create fifo file
+	if((ret_val = mkfifo("task4_fifo", 0666)) < 0){perror("Error creating fifo\n"); exit(1);}
 
 	memset(buffer, '\0', sizeof(buffer));  // Fills all values of buffer with '\0'
 	
+	// Write data to the fifo
 	data_processed = write(file_pipes[WRITE_END], some_data, strlen(some_data));
-	strcpy(buffer, some_data);
 	printf("Wrote %d bytes\n", data_processed);
 	
+	// Read data from the fifo
 	data_processed = read(file_pipes[READ_END], buffer, strlen(buffer));
 	printf("Read %d bytes: %s\n", data_processed, buffer);
 	
