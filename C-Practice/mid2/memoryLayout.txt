@@ -1,0 +1,12 @@
+--- Memory Layout of a C Program (C Program is comprised of 5 components) ---
+OVERVIEW: Text Segment, Initialized Data Segment, Uninitualized Data Segment, Stack, Heap
+
+Text Segment: The machine instruction sets. Only one copy needs to be in the memory since it might be shared.
+
+Initialized Data Segment: Variables that are initialized in the program (ex: int i = 0)
+
+Uninitialized Data Segment (bss): Variables that are not initialized
+
+Stack: Saved temporary variables when a function is called. Also saves the caller's environment values such as return address.
+
+Heap: Used for dynamic memory allocation

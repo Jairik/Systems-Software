@@ -1,0 +1,16 @@
+--- Dynamic Memory Allocation ---
+There are three functions for memory allocation by C (located in Heap):
+
+void *malloc(size_t size); (size = size of memory block in bytes)
+Allocates a specified number of bytes of memory. Initial value of memory is indeterminate.
+
+void *calloc(size_t nitems, size_t size); (size = ^, nitem = number of elements to be allocated)
+Allocates space for a specified number of objects of a specified size. The space is initialized to all 0 bits.
+
+void *realloc(void *ptr, size_t size);  (size = New size of memory block, in bytes. ptr = ptr to old memory block previously allocated)
+Changes the size of a previously allocated area
+
+free(void *ptr);  
+Deallocates the space pointed to by ptr
+
+--- All functions return the pointer to the allocated memory --- 

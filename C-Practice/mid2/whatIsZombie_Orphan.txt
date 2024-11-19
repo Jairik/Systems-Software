@@ -1,0 +1,22 @@
+--- What is a zombie and orphan process? ---
+
+Zombie Process: When the child terminates before the parent & the parent doesn't catch the child's information (via wait or similar call). Since this last little bit of information is still in the operating system's process table, it is a zombie process.
+When a child dies, it sends a SIGCHLD signal to the parent. Therefore, this signal can be caught with wait() or waitpid() to prevent zombie process.
+
+-------------------------------------
+#include <sys/wait.h>
+
+pid_t wait(int *status);  
+^ Returns the PID of terminated child process (-1 on error). 'status' is a ptr to an integer where the exit status will be stored. Status can be checked using the following functions:
+	- int WIFEEXITED(int status);  // Returns true (1) if child process terminate normally
+	- int WIFSIGNALED(int status);  // Returns true (1) if child terminates abnormally
+	
+pid_t waitpid(pid_t pid, int *status, int option);  
+^ Returns the same thing as wait(). However, adds the following optional parameters:
+	PARAM->pid: Specifies the child to wait for
+	PARAM->options: Controls the behavior of waitpid. Can be WNOHANG (return immediately if no child process has been exited), WUNTRACED (return if a child process has stopped), and WCONTINUED (return if a child process has resumed). Main one if WNOHANG.
+-------------------------------------
+
+Orphan Process: Parents are dead (terminated, killed, or exited) but child is still alive. The init process (PID == 1) adopts the child. 
+
+
