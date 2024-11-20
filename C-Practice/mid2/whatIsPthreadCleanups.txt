@@ -1,0 +1,20 @@
+-- What are pthread cleanup functions? --
+Covers pthread_cleanup_push() and pthread_cleanup_pop()
+
+--> pthread_cleanup_push
+
+#include <pthread.h>
+void pthread_cleanup_push(void (*routine)(void *), void *arg);
+
+This pushes a clean up function routine, which is to be called with arg when the thread performs:
+	- pthread_exit()
+	- pthread_cancel()
+
+Thus, when either of these are called, the functions associated with pthread_cleanup_push is called.
+
+--> pthread_cleanup_pop
+
+#include <pthread.h>
+void pthread_cleanup_pop(int execute);
+
+Every pthread_cleanup_push MUST be associated with a pthread_cleanup_pop, since they form a stack of cleanup handlers. pthread_cleanup_pop removes the last cleanup handler from the stack (LIFO), optionally executing it if execute == 1 (else, it will not execute and just remove it).

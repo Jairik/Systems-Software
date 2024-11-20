@@ -1,0 +1,39 @@
+-- Thread Syncrhonization --
+Contents: pthread_join(), Mutex, pthread_cancel(), pthread cancellation points
+
+A single thread can be terminated by returning from start routine, calling pthread_cancel, or calling pthread_exit().
+
+There are THREE ways to accomplish synchronization between threads:
+	- Mutexes
+	- Joining
+	- (Global) Condition Variables
+
+--> Mutexes
+^ A variable that can be one of two states: unlock(0) or lock(1)
+Mutexes are used to prevent data inconsistencies due to race conditions (used for serializing shared resources)
+
+Each thread needs to check the lock variable before entering a critical condition
+	- If lock == 0: Thread can enter a critical condition (unlocked)
+	- If lock == 1: Thread cannot enter a critical condition (locked) - must wait until unlocked
+
+To create mutex (at global level): 
+	#include <pthread.h>
+	pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER;
+Then, can be accessed through:
+	pthread_mutex_lock(&mutex1);	// Execute Critical Section Here
+	pthread_mutex_unlock(&mutex1);  // Execute Remaining Non-Critical Section Here
+
+--> pthread_join()
+
+Super easy, no need to review
+
+--> pthread_exit() - Used for exiting the current thread
+#include <pthread.h>
+void pthread_exit(NULL);  // Parameter can be NULL for these purposes
+
+
+--> pthread_cancel()
+^ Requests cancellation of the target thread (cancelled based on it's ability to be cancelled)
+pthread_cancel(pthread_t thread);
+
+-- End --

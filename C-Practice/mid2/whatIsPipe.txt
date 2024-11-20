@@ -1,0 +1,12 @@
+-- What is a pipe? --
+
+A pipe is used to communicate between a parent & child process or two sibling processes. In the context of linux, pipes are a half duplex (data flows in only one direction).
+
+#include <unistd.h>
+int pipe(int filedes[2]);
+
+Two file descriptors are returned through the filedes[] arguments:
+	- filedes[0] is open for READING
+	- filedes[1] is open for WRITING
+
+

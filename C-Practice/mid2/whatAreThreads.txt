@@ -1,0 +1,44 @@
+--- What are Threads? ---
+
+Threads are processes in a process (multiple execution in the same process environment).
+^ It is made up with a theead ID, program counter, a register set, and a stack.
+^ Since different threads are not as independent as processes, they share the same address space.
+
+In a single CPU system, the CPU switches rapidly back and forth among threads in the single CPU system (May be different in multi-threaded CPU system, where OS delegates C threads). There is no protection between threads since they all use the same address space.
+
+A thread can be in any one of the several states:
+	-> Running
+	-> Blocked
+	-> Ready
+
+Threads Implementation
+Implementing Threads in User Space:
+	-> Threads are handled by the run-time system
+	-> OS does not know the existence of threads
+Implementing Thread in the Kernel
+	-> Threads are handled by the OS
+
+Summary of Thread
+	- Exists within a process and uses the process resources
+	- Has its own independent of control as long as parent exits & OS supports it
+	- Duplicates only essential resources it needs
+	- Share the process resources with other threads that act equally independently
+	- Dies if the parent process dies
+	- Is "lightweight" because most of the overhead has already been accomplished through the creation of the process
+
+--> Thread IDs
+Each thread has a thread id (pthread_t), however it only has significance within the context where it belongs. In order to compare, pthread_equal(pthread_t t1, pthread_t t2); must be used.
+
+int pthread_equal(pthread_t t1, pthread_t t2);  // Returns non-zero if equal, 0 otherwise
+pthread_t pthread_self(void);  // Returns thread ID of calling thread
+
+--> Thread Creation
+#include <pthread.h>
+int pthread_create(pthread_t *thread, const pthread_attr_t *att, void *(*start_routine)(void *), void *arg);
+
+- A single thread inside a process can terminate in THREE ways: 
+	1) The thread can simply return from the start routine
+	2) The thread can be cancelled by another thread with pthread_cancel() in the same process
+	3) The thread can call pthread_exit()
+
+--- Lightwork ---

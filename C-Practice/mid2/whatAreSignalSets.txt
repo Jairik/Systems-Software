@@ -1,0 +1,34 @@
+--- What are Signal Sets? ---
+
+POSIX defines sigset_t to be the data type that contains a signal set.
+
+There are five functions that manipulate a signal set:
+
+	1) int sigemptyset(sigset_t *set);  // Set that all signals are excluded
+	2) int sigfillset(sigset_t *set);  // Set all signals are included
+	3) int sigaddset(sigset *set, int signo);  // Add a signal to a signal set
+	4) int sigdelset(sigset_t *set, int signo);  // Remove a signal from signal set
+	5) int sigismember(const sigset_t *set, int signo);  // Check membership of signal
+
+sigprocmask() System Call examines/changes the signal mask of the calling process
+
+#include <signal.h>
+int sigprocmask(int how, const sigset_t *newset, sigset_t *oldset); 
+
+how -> The way in which the signal is changed. SIG_BLOCK, (all signals given should be blocked), SIG_UNBLOCK(all signals given should not be blocked), SIG_SETMASK(the set of signals should replace the old set of signals being blocked)
+
+
+sigaction() System Call allows us to modify/examine the action associated w/ a particular signal
+
+#include <signal.h>
+int sigaction(int signo, const struct sigaction *act, struct sigaction *oldact);  // act, oact can be NULL
+
+Where a sigaction object is defined as:
+struct sigaction{
+	void (*sa_handler) (int);  // Pointer to signal handler
+	sigset_t sa_mask; 	   // Additional set of signals to block
+	int sa_flag;  		   // Signal Options
+	void (*sa_handler) (int siginfo_t *, void *);  // Alternate handler
+}
+
+----------------------------

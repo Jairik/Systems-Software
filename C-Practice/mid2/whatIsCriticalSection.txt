@@ -1,0 +1,8 @@
+--- What is Critical Section (Interprocess Communication)? ---
+Critical Section is a 'critical' portion of the code where shared resources are accessed, meaning that syncrhonization is needed (to prevent things like race condition). 
+If we could arrange it such that no two processed were ever in their critical sections at the same time, race condition can be avoided.
+
+Dining Philosphers Problem
+In this problem, philosphers attempt to access shared resources (chopsticks), requiring syncrhonization to prevent conflicts. Interprocess communication ensures that each philospher coordinates their actions to avoid deadlocks and ensure fair access to the chopsticks while adhering to the constrains.
+
+--- Very Easy ---
