@@ -1,0 +1,7 @@
+--- Task 4 Response - Making the Fifo ---
+
+In order to make the Fifo, I used the following command(s):
+	mkfifo /tmp/task4_fifo  <-- Making the Fifo file
+	chmod a+rwx /tmp/task4_fifo   <-- Assigning it with the appropriate permissions
+
+Alternatively, I could have done this within the C program by using the mkfifo(path, permissions) system call within the C program. 

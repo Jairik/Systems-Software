@@ -28,12 +28,14 @@ int main(){
 		// Child process
 		else if(fork_result == 0){
 			sprintf(buffer, "%d", file_pipes[0]);
-			(void)execl("pipe4", "pipe4", buffer, (char *) 0);
+			(void)execl("pipe4", "pipe4", file_pipes[0], (char *) 0);  // (c)-ish
 			exit(1);
 		}
 		// Parent process
 		else{
+			wait(&status);  // (a) Parent waits for child
 			data_processed = write(file_pipes[1], some_data, strlen(some_data));
+			close(file_pipes[1]); // (b) Closing fd of write end of the pipe on parent's side
 			printf("%d - wrote %d bytes\n", getpid(), data_processed);
 		}
 	}	

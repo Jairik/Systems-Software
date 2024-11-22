@@ -7,15 +7,14 @@
 
 
 int main(int argc, char *argv[]){
-	int data_processed;
+	int data_processed, fd = atoi(argv[1]);  // (c) - Passing in read end of pipe as parameter  
 	char buffer[BUFSIZ + 1];
-	int file_descriptor;
 	
 	memset(buffer, '\0', sizeof(buffer));
-	sscanf(argv[1], "%d", &file_descriptor);
 	
-	data_processed = read(file_descriptor, buffer, BUFSIZ);
-	
+	data_processed = read(fd, buffer, BUFSIZ);
+	close(fd);  // (d) Closing fd of read end of pipe for child
+
 	printf("%d - read %d bytes: %s\n", getpid(), data_processed, buffer);
 	exit(0);
 }
