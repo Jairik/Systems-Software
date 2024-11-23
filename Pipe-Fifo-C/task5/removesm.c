@@ -4,9 +4,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <fcntl.h>
+#include <unistd.h>
 
 int main(int argc, char *argv[]){
 	int fd1 = atoi(argv[1]);
-	unlink(fd1);  // remove from memory
+	if(close(fd1) == -1){perror("Unlink error"); exit(1);}  // remove from memory
+	printf("Pipe is removed from memory\n");
+	exit(0);
 }
