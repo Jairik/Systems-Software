@@ -12,12 +12,15 @@ int main(){
 	key_t key;
 	int shmid;
 	struct Memory shm;
-	
+
+	// Get key
+	key = ftok(".", 'x');	
+
 	// Get the shared memory id
 	if((shmid = shmget(key, sizeof(struct Memory), 0)) < 0){perror("shmget error"); exit(1);}
 
 	// Remove the shared memory
 	shmctl(shmid, IPC_RMID, NULL);
-	
+
 	exit(0);  // Return with success  
 }

@@ -18,10 +18,10 @@ int main(){
 	key = ftok(".", 'x');  // Creating a key value
 	
 	// Creating shared memory
-	if((shmid == shmget(key, sizeof(struct Memory), IPC_CREAT | 0666)) < 0){perror("shmget error"); exit(1);}
+	if((shmid = shmget(key, sizeof(struct Memory), IPC_CREAT | 0666)) < 0){perror("shmget error"); exit(1);}
 
 	// Attach to shared memory
-	if((long)(shm = (struct Memory *) shmat(shmid, NULL, )) == -1){perror("shmat error"); exit(1);}
+	if((long)(shm = (struct Memory *) shmat(shmid, NULL, 0)) == -1){perror("shmat error"); exit(1);}
 
 	// Set attributes of shared memory
 	shm->status = NOT_READY;
