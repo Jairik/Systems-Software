@@ -1,50 +1,30 @@
 /* Lab 9 - Task 5
  * JJ McCauley
- * buildsm.c: Builds a shared memory to be used for interprocess communication (using pipe, however FIFO could also be used) */
+ * buildsm.c: Builds a shared memory to be used for interprocess communication */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
+#include <sys/shm.h>
 #include <unistd.h>
+#include "header.h"
 
 int main(){
-	int fd[2];  // Initializing pipe
-	if(pipe(fd) < 0){perror("Pipe Error"); exit(1);}  // Create the pipe
 	
-	// Create c-strings to hold file descriptors to make them valid arguments
-	char fd0Str[10], fd1Str[10];
-	sprintf(fd0Str, "%d", fd[0]);
-	sprintf(fd1Str, "%d", fd[1]);
-	
-	// Create parent and child to run process1 and process2
-	pid_t pid = fork();
+	int shmid;
+	key_t key;
+	struct Memory *shm;
 
-	if(pid < 0){perror("Fork Error"); exit(1);}
+	key = ftok(".", 'x');  // Creating a key value
 	
-	else if(pid == 0){  // Child case
-		printf("Executing Process 1\n");
-		execl("./process1", "process1", fd1Str, (void *) 0);
-		exit(1);  // Exit if execl failure
-	}
+	// Creating shared memory
+	if((shmid == shmget(key, sizeof(struct Memory), IPC_CREAT | 0666)) < 0){perror("shmget error"); exit(1);}
 
-	else{  // Parent case
-		pid_t pid2 = fork();
-		if(pid2 < 0){perror("Fork Error 2"); exit(1);}
-		else if(pid2 == 0){ // Child case
-			printf("Executing Process 2\n");
-			execl("./process2", "process2", fd0Str, (void *) 0);
-			exit(1);  // Exit if execl failure
-		}
-		else{ // Parent case- wait for them to finish then call removesm
-			close(fd[0]);
-			close(fd[1]);
-			wait(NULL);
-			wait(NULL);
-			
-			execl("removesm", "removesm", fd, (void *) 0);
-		}
-	}
-	
-	exit(0); //Successful termination
+	// Attach to shared memory
+	if((long)(shm = (struct Memory *) shmat(shmid, NULL, )) == -1){perror("shmat error"); exit(1);}
+
+	// Set attributes of shared memory
+	shm->status = NOT_READY;
+	shm->gostop = GO;
+	exit(0);  // Exit with success
 }

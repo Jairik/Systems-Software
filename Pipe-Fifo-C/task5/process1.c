@@ -5,28 +5,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/shm.h>
+#include "header.h"
 
-/* Takes in one parameter: Pipe file descriptor */
-int main(int argc, char *argv[]){
-	if(argc != 2){perror("Invalid number of arguments"); exit(1);}
+int main(){
 
+	int shmid, r;
+	key_t key;
+	struct Memory *shm;
+	int num1, num2;
 	char buf[BUFSIZ];
-	int tempNumBuf[2];
-	int fd = atoi(argv[1]);  // Get file descriptor for pipe
-	
-	// Reading integers from standard output and feeding into pipe
-	int r;
+
+	// Get the shared memory key value & open shared memory
+	key = ftok(".", 'x'); 
+	if((shmid = shmget(key, sizeof(struct Memory), 0)) < 0){perror("shmget error"); exit(1);}
+
+	// Attach to shared memory
+	shm = (struct Memory *) shmat(shmid, NULL, 0);
+	if((long) shm == -1){perror("shmat error"); exit(1);}
+
+	// Set flags
+	shm->gostop = GO;
+	shm->status = NOT_READY;
+	printf("Enter two integers\n");
 	while(r = (read(STDIN_FILENO, buf, BUFSIZ)) > 0){
-		if(sscanf(buf, "%d%d", &tempNumBuf[0], &tempNumBuf[1]) == 2){  // If two valid numbers
-			if(write(fd, buf, BUFSIZ) < 0){perror("Write error in process 1"); exit(1);}
+		if(sscanf(buf, "%d%d", &num1, &num2) == 2){  // If two valid numbers
+			// Assign numbers to shared memory
+			shm->data.num1 = num1;
+			shm->data.num2 = num2;
+			// Assign flag to indicate shared memory is filled
+			shm->status = FILLED;
+			// Wait until receiver receives input
+			while(shm->status != TAKEN){;}
+
 		}
 		else{
 			printf("Invalid Arguments\n");
 		}
-
+		printf("Enter two integers of CTRL-D to stop\n");
 	}
-	printf("End of File reached\n");
-	if(close(fd) == -1){perror("Process 1: Error closing file descriptor"); exit(1);}  // Close write end
-	printf("Process 1 closed fd\n");
-	exit(0);  // Successfully exit program
+
+	// Set stop flag & detach from shared memory
+	shm->gostop = STOP;
+	shmdt((void *) shm);  // Detach
+	exit(0);
 }

@@ -5,29 +5,38 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/shm.h>
+#include "header.h"
+
 #define MAXSIZE 256
 
-/* Parameters: Read end of pipe */
-int main(int argc, char *argv[]){
-	if(argc != 2){perror("Invalid number of arguments"); exit(1);}
 
-	char buf[BUFSIZ];
-	int fd = atoi(argv[1]);  // Get read end of pipe
-	int num1, num2;
+int main(){
+
+	int shmid, num1, num2;
+	key_t key;
+	struct Memory *shm;
+
+	// Get key value & open existing shared memory
+	key = ftok(".", 'x');  // Get key value
+	if((shmid = shmget(key, sizeof(struct Memory), 0)) < 0){perror("shmget error"); exit(1);}
+	shm = (struct Memory *) shmat(shmid, NULL, 0);
+	if((long)shm == -1){perror("shmat error"); exit(1);}
 	
-	printf("Inside process 2\n");
-	
-	int r;
-	while((r = read(fd, buf, BUFSIZ)) > 0){
-		sscanf(buf, "%d%d", &num1, &num2);
+	// Calculate sums while go flag
+	while(shm->gostop == GO){
+		while(shm->status != FILLED){
+			if(shm->gostop == STOP){break;}
+			;
+		}
+		num1 = shm->data.num1;
+		num2 = shm->data.num2;
 		printf("Sum: %d\n", (num1+num2));
-		printf("Attempting to read fd: %s\n", buf);
-		*buf = "";  // Clearing buffer
+		shm->status = TAKEN;
 	}
+	
+	// Detach shared memory
+	shmdt((void *) shm);
 
-	printf("Process 2 done reading\n");
-	close(fd);
-	printf("Process 2 closed fd");
-	execl("removesm", "removesm", (void *) 0);  // Call program to remove shared memory
 	exit(0);
 }

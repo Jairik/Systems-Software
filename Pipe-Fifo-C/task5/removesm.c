@@ -5,10 +5,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/shm.h>
+#include "header.h"
 
-int main(int argc, char *argv[]){
-	int fd1 = atoi(argv[1]);
-	if(close(fd1) == -1){perror("Unlink error"); exit(1);}  // remove from memory
-	printf("Pipe is removed from memory\n");
-	exit(0);
+int main(){
+	key_t key;
+	int shmid;
+	struct Memory shm;
+	
+	// Get the shared memory id
+	if((shmid = shmget(key, sizeof(struct Memory), 0)) < 0){perror("shmget error"); exit(1);}
+
+	// Remove the shared memory
+	shmctl(shmid, IPC_RMID, NULL);
+	
+	exit(0);  // Return with success  
 }
