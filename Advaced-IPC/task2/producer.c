@@ -18,8 +18,7 @@ int main(){
 	int shmid;  // Shared memory ID
 	key_t key;
 	struct Memory *shm;
-	char name[20];
-	int randInt, arrIndex;
+	int randInt, index;
 
 	// Opening shared memory
 	key = ftok(".", 't');  // Getting key value
@@ -40,38 +39,30 @@ int main(){
 	shm->data.arrIndex = 0;
 
 	// Adding random numbers to buffer forever
-	while(1){
-		printf("inside while loop in producer\n");
-		usleep(500000);
+	while(shm->gostop == GO){
 		randInt = getRand();
 		while(shm->status == FILLED){
 			printf("Shared Memory is full, producer waits...\n");
-			usleep(50000);  // Wait until the green light is given from receiver
+			usleep(500000);  // Wait until the green light is given from receiver
 		}
-		while(shm->blocked == 1){;}  // Wait while blocked
+		
 		// Place the random integer in array and update index
-		shm->blocked = 1;
-		while((arrIndex = shm->data.arrIndex) > 4){usleep(500);}  // Wait until int is in range
-		printf("DEBUGGING CURRENT INDEX: %d\n", arrIndex);
-		shm->data.arr[arrIndex] = randInt;
-		shm->data.arrIndex = ++arrIndex;
-		shm->blocked = 0;
-
-		// Set filled flag if necessary
-		if(arrIndex == 5){
+		index = shm->data.arrIndex;
+		shm->data.arr[index] = randInt;
+		shm->data.arrIndex = ++index;
+		
+		// Update flag if buffer is full
+		if(index == 5){
 			shm->status = FILLED;
-			printf("Shared Memory is FILLED by producer\n");
-			usleep(50000);
 		}
 
 		// Print contents of shared memory
-		shm->blocked = 1;
 		printf("Shared Memory contents from PRODUCER: ");
-		for(int i = 0; i <= arrIndex; i++){
+		for(int i = 0; i < index; i++){
 			printf(" %d", shm->data.arr[i]);
 		}
-		printf("\n");
-		shm->blocked = 0;
+		printf("\n\n");
+		usleep(500000);
 	}
 
 	shm->gostop = STOP;  // Stop the receiver process

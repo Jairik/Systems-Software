@@ -26,25 +26,30 @@ int main(){
 
 	// Read & Remove integers from shared memory
 	while(shm->gostop == GO){
-		printf("Inside RECEIVER while loop\n");
-		while((index = shm->data.arrIndex) < 0){usleep(500);}  // Wait for producer to upload more data
-		while(shm->blocked == 1){;}  //  Wait until not blocked
-		shm->blocked = 1;
-		printf("Removing %d from index %d\n", shm->data.arr[index], index);
+		
+		// Checking if array is empty
+		while(shm->status == TAKEN || shm->data.arrIndex == 0){
+			usleep(500000);
+		}
+
+		index = shm->data.arrIndex;
 		shm->data.arr[index] = 0;  // Remove from the array
-		shm->data.arrIndex = --index; 
+		if(index > 0){
+			shm->data.arrIndex = --index; 
+		}
+		else{
+			shm->data.arrIndex = 0;  // Array is empty, ensure that it doesn't go past 0
+		}
 		
 		// Print contents of shared memory
 		printf("Shared Memory contents from RECEIVER: ");
 		for(int i = 0; i <= index; i++){
 			printf(" %d", shm->data.arr[i]);
 		}
-		shm->blocked = 0;
-		shm->status = TAKEN;
-		printf("\n");
-	}
 
-	printf("Out of for loop, SHM Status -> %d", shm->gostop);
+		printf("\n\n");
+		usleep(500000);
+	}
 
 	// Once here, remove shared memory
 	shmctl(shmid, IPC_RMID, NULL);

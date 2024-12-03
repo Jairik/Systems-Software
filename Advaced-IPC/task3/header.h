@@ -1,4 +1,4 @@
-/* Lab 10 - Task 2
+/* Lab 10 - Task 3
  * JJ McCauley
  * Header.h - Holds structs for shared memory */
 
@@ -6,20 +6,25 @@
 #define NOT_READY -1
 #define FILLED 0
 #define TAKEN 1
-#define GOODTOGO 2
 #define GO 2
 #define STOP 0
 
+// Semephore Flags
+#define MUTEX 0
+#define FULL 1
+#define EMPTY 2
+
+// Define Array Size as Constant
+#define ARRSIZE 5
 
 struct nums {
-	int arr[5];  // Array of 5 integers
+	int arr[ARRSIZE];  // Array of 5 integers
 	int arrIndex;  // Index to hold current position
 };
 
 
 struct Memory{
-	int status;  // Either FILLED or TAKEN
 	int gostop;  // GO or STOP
-	int blocked;  // Either 1 (blocked) or 0 (not blocked)
 	struct nums data;  // Struct to hold the 5 integers
 };
+
