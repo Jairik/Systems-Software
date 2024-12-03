@@ -52,7 +52,7 @@ int main(){
 		shm->data.arrIndex = ++index;
 		
 		// Update flag if buffer is full
-		if(index == 5){
+		if(index >= 5){
 			shm->status = FILLED;
 		}
 

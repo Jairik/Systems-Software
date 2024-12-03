@@ -28,7 +28,7 @@ int main(){
 	while(shm->gostop == GO){
 		
 		// Checking if array is empty
-		while(shm->status == TAKEN || shm->data.arrIndex == 0){
+		while(shm->data.arrIndex == 0){
 			usleep(500000);
 		}
 
@@ -40,12 +40,14 @@ int main(){
 		else{
 			shm->data.arrIndex = 0;  // Array is empty, ensure that it doesn't go past 0
 		}
-		
+
 		// Print contents of shared memory
 		printf("Shared Memory contents from RECEIVER: ");
-		for(int i = 0; i <= index; i++){
+		for(int i = 0; i < index; i++){
 			printf(" %d", shm->data.arr[i]);
 		}
+
+		shm->status = TAKEN; 
 
 		printf("\n\n");
 		usleep(500000);
