@@ -50,15 +50,14 @@ int main(){
 	while(1){
 		
 		// Checking if array is empty (FULL=0) or if is blocked
-		while(semctl(semid, 2, GETVAL) == 0 || semctl(semid, 0, GETVAL) == 0){
+		while(semctl(semid, 2, GETVAL) == 0){
 			usleep(1000);  // Sleep for a lil
 		}
 		
 		down(semid, 2);  // Decrement full
 		down(semid, 0);  // Decrement Mutex to 0
-		index = shm->data.arrIndex;
-		shm->data.arr[index] = 0;  // Remove from the array
-		shm->data.arrIndex = --index; 
+		index = semctl(semid, 2, GETVAL);
+		shm->data.arr[--index] = 0;  // Remove from the array
 		
 		// Print contents of shared memory
 		printf("Shared Memory contents from RECEIVER: ");
@@ -72,7 +71,6 @@ int main(){
 		usleep(500000);
 	}
 
-	printf("Out of for loop, SHM Status -> %d", shm->gostop);
 	exit(0);
 
 }

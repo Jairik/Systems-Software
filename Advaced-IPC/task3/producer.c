@@ -61,7 +61,7 @@ int main(){
 		randInt = getRand();
 		
 		// Wait until semaphore is not full (Empty Semaphore is not 0) and not blocked by mutex
-		while(semctl(semid, 1, GETVAL) == 0 || semctl(semid, 0, GETVAL) == 0){
+		while(semctl(semid, 1, GETVAL) == 0){
 			usleep(1000);  // Sleep for a lil
 		}
 
@@ -69,10 +69,8 @@ int main(){
 		down(semid, 0);  // Decrement the Mutex to 0
 		
 		// Insert the item
-		arrIndex = shm->data.arrIndex;
+		arrIndex = semctl(semid, 2, GETVAL);
 		shm->data.arr[arrIndex] = randInt;
-		++arrIndex;  // Increment the index
-		shm->data.arrIndex = arrIndex;  // Set the new index
 
 		// Print contents of shared memory
 		printf("Shared Memory contents from PRODUCER: ");
@@ -80,6 +78,7 @@ int main(){
 			printf(" %d", shm->data.arr[i]);
 		}
 		printf("\n");
+
 		up(semid, 0);  // Increment the Mutex back to 1
 		up(semid, 2);  // Increment Full Set
 		usleep(500000);

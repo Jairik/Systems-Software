@@ -19,7 +19,6 @@
 
 struct nums {
 	int arr[ARRSIZE];  // Array of 5 integers
-	int arrIndex;  // Index to hold current position
 };
 
 
