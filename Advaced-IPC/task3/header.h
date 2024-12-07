@@ -11,8 +11,8 @@
 
 // Semephore Flags
 #define MUTEX 0
-#define FULL 1
-#define EMPTY 2
+#define FULL 2
+#define EMPTY 1
 
 // Define Array Size as Constant
 #define ARRSIZE 5

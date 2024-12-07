@@ -60,27 +60,25 @@ int main(){
 	while(1){
 		randInt = getRand();
 		
-		// Wait until semaphore is not full (Empty Semaphore is not 0) and not blocked by mutex
-		while(semctl(semid, 1, GETVAL) == 0){
-			usleep(1000);  // Sleep for a lil
-		}
-
-		down(semid, 1);  // Decrement Empty Set
-		down(semid, 0);  // Decrement the Mutex to 0
+		down(semid, EMPTY);  // Decrement Empty Set
+		down(semid, MUTEX);  // Decrement the Mutex to 0
 		
 		// Insert the item
-		arrIndex = semctl(semid, 2, GETVAL);
+		arrIndex = semctl(semid, FULL, GETVAL);
+		//arrIndex = (ARRSIZE - arrIndex) % ARRSIZE;
 		shm->data.arr[arrIndex] = randInt;
 
 		// Print contents of shared memory
 		printf("Shared Memory contents from PRODUCER: ");
-		for(int i = 0; i < arrIndex; i++){
-			printf(" %d", shm->data.arr[i]);
+		for(int i = 0; i < ARRSIZE; i++){
+			int value = shm->data.arr[i];
+			if(value == 0){printf(" _");}  // Skip removed elements
+			else{printf(" %d", value);}
 		}
 		printf("\n");
 
-		up(semid, 0);  // Increment the Mutex back to 1
-		up(semid, 2);  // Increment Full Set
+		up(semid, MUTEX);  // Increment the Mutex back to 1 (unlock critical section)
+		up(semid, FULL);  // Increment Full Set
 		usleep(500000);
 	}
 

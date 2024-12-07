@@ -49,24 +49,25 @@ int main(){
 	// Read & Remove integers from shared memory
 	while(1){
 		
-		// Checking if array is empty (FULL=0) or if is blocked
-		while(semctl(semid, 2, GETVAL) == 0){
-			usleep(1000);  // Sleep for a lil
-		}
+		down(semid, FULL);  // Decrement full
+		down(semid, MUTEX);  // Decrement Mutex to 0 (lock critical section)
 		
-		down(semid, 2);  // Decrement full
-		down(semid, 0);  // Decrement Mutex to 0
-		index = semctl(semid, 2, GETVAL);
-		shm->data.arr[--index] = 0;  // Remove from the array
+		index = semctl(semid, FULL, GETVAL);
+		//index = (ARRSIZE-index) % ARRSIZE;  // Weird fix to try and properly compute the index
+		
+		shm->data.arr[index] = 0;  // Remove from the array
 		
 		// Print contents of shared memory
 		printf("Shared Memory contents from RECEIVER: ");
-		for(int i = 0; i <= index; i++){
-			printf(" %d", shm->data.arr[i]);
+		for(int i = 0; i < ARRSIZE; i++){
+			int value = shm->data.arr[i];
+			if(value == 0){printf(" _");}  // Skip 'deleted' items
+			else{printf(" %d", value);}
 		}
+
 		printf("\n");
-		up(semid, 0);  // Increment mutex back to 1
-		up(semid, 1);  // Increment empty 
+		up(semid, MUTEX);  // Increment mutex back to 1
+		up(semid, EMPTY);  // Increment empty 
 		
 		usleep(500000);
 	}

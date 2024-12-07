@@ -8,6 +8,7 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <sys/types.h>
+#include <string.h>  // For memset
 #include "header.h"
 
 union senum{
@@ -54,18 +55,21 @@ int main(){
 	}
 
 	// Initialize value of second semaphore (Filled)
-	arg.val = ARRSIZE;
+	arg.val = 0;
 	if(semctl(semid, FULL, SETVAL, arg) == -1){
 		perror("Error in semctl second semaphore\n");
 		exit(1);
 	}	
 
 	// Initialize value of third semaphore (Empty)
-	arg.val = 0;
+	arg.val = ARRSIZE;
 	if(semctl(semid, EMPTY, SETVAL, arg) == -1){
 		perror("Error in semctl third semaphore\n");
 		exit(1);
 	}
+
+	// Setting every value in array to 0
+	memset(shm->data.arr, 0, sizeof(shm->data.arr));
 
 	// Setting status flags
 	shm->gostop = GO;
