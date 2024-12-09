@@ -23,16 +23,17 @@ int palind(int fd1, int fd2){
 	int offsetForward = lseek(fd1, 0, SEEK_SET);  // Setting fd1 to read forward
 	int middle = ((lseek(fd2, 0, SEEK_END))/2);  // Setting offset middle
 	int offsetBackward = lseek(fd2, -2, SEEK_END);	// Setting fd2 to read backward
-	int cForward, cBackward, counter;
+	int cForward, cBackward, counter = 0;
 	printf("Offset center: %d\n", middle);
 	printf("Scanning for palindrome...\n");
 	while(counter <= (int) middle){
-		offsetForward = lseek(fd1, counter, SEEK_SET);
+		offsetForward = lseek(fd1, counter+1, SEEK_SET);
+		printf("Current offset: %d\n", counter);
 		if((cForward = read(fd1, buf1, BSIZE)) < 0){pError("Error reading file (fd1)");}
-		printf("Reading %d from fd1 buf\n", buf1[0]);
-		offsetBackward = lseek(fd2, counter, SEEK_END);
+		printf("Reading %c from fd1 buf\n", buf1[0]);
+		offsetBackward = lseek(fd2, (-1) * (counter + 1), SEEK_END);
 		if((cBackward = read(fd2, buf2, BSIZE)) < 0){pError("Error reading file (fd2)");}
-		printf("Reading %d from fd2 buf\n", buf1[0]);
+		printf("Reading %c from fd2 buf\n", buf1[0]);
 		if(buf1[0] != buf2[0]){return 0;}  // Counterargument found, not palindrome
 		//lseek(fd2, -2, SEEK_CUR);  // Move file 'cursor' back 2 to make up for read
 		// Updating offsets for conditional

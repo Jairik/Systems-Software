@@ -10,3 +10,11 @@ Two file descriptors are returned through the filedes[] arguments:
 	- filedes[1] is open for WRITING
 
 
+--> popen(), pclose()
+
+#include <stdio.h>
+FILE *popen(const char *cmdstring, const char *mode);  // Returns fill ptr on success, NULL on error
+
+popen() function does fork and exec to execute cmdstring.
+For mode, there are two options:
+

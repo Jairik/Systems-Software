@@ -1,0 +1,3 @@
+-- What is race condition? --
+
+A race condition is a situation where two or more processes are reading or writing some shared data and the final result depends on who runs precisely when.
